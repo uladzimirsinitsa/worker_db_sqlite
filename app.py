@@ -26,6 +26,11 @@ class Info_(BaseModel):
     status_: int
 
 
+class Urls_(BaseModel):
+    code_: int
+    status_: int
+
+
 app = FastAPI()
 
 db = sqlite3.connect(DB)
@@ -34,6 +39,10 @@ create_table = "CREATE TABLE IF NOT EXISTS db_parser(\
         urls STRING PRIMARY KEY, status INT, parsing_data STRING)"
 c = db.cursor()
 c.execute(create_table)
+
+
+def create_list_urls(code_, status_):
+    pass
 
 
 def create_info(code_, status_):
@@ -64,17 +73,25 @@ def create_record(url, status_, parsing_data):
     db.commit()
 
 
-@app.get("/")
-async def get_info(info: Info_):
-    data = jsonable_encoder(info)
+@app.get("/v1/urls")
+async def get_urls(request_: Urls_):
+    data = jsonable_encoder(request_)
+    code_ = data.get("code_")
+    status_ = data.get("status_")
+    return create_list_urls(code_, status_)
+
+
+@app.get("/v1/info")
+async def get_info(request_: Info_):
+    data = jsonable_encoder(request_)
     code_ = data.get("code_")
     status_ = data.get("status_")
     return create_info(code_, status_)
 
 
-@app.post("/")
-async def root(record: Record_):
-    data = jsonable_encoder(record)
+@app.post("/v1/")
+async def root(request_: Record_):
+    data = jsonable_encoder(request_)
     code_ = data.get("code_")
     url = data.get("url")
     status_ = data.get("status_")
