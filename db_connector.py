@@ -26,7 +26,9 @@ def create_list_urls(code_, status_):
 def create_info(code_, status_):
     '''Create response'''
     if code_ == 0:
-        return _extracted_from_create_info_3("SELECT urls FROM db_parser", "all urls")
+        return _extracted_from_create_info_3(
+            "SELECT urls FROM db_parser", "all urls"
+            )
     if status_ == 0:
         return _extracted_from_create_info_3(
             "SELECT urls FROM db_parser WHERE status=0", "all urls status=0"
