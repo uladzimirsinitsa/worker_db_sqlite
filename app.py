@@ -1,7 +1,6 @@
 
 import os
 import sqlite3
-from datetime import datetime
 
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
