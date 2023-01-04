@@ -13,41 +13,47 @@ except KeyError:
     db = sqlite3.connect(r'C:\dbs\test_db.db')
 
 
-CREATE_TABLE = "CREATE TABLE IF NOT EXISTS db_parser(\
-        urls STRING PRIMARY KEY, status INT, parsing_data STRING)"
-c = db.cursor()
-c.execute(CREATE_TABLE)
+def setup_database():
+    CREATE_TABLE = "CREATE TABLE IF NOT EXISTS db_parser(\
+                urls STRING PRIMARY KEY, status INT, parsing_data STRING)"
+    connect = db.cursor()
+    connect.execute(CREATE_TABLE)
+    yield connect
 
 
-def create_list_urls(code_, status_):
+def create_list_urls(connect, code, status):
     pass
 
 
-def create_info(code_, status_):
+def _extracted_from_create_info_3(connect, arg0, arg1):
+    query = arg0
+    data = connect.execute(query)
+    return {arg1: len(data.fetchall())}
+
+
+def create_info(connect, code, status):
     '''Create response'''
-    if code_ == 0:
+    if code == 0:
         return _extracted_from_create_info_3(
-            "SELECT urls FROM db_parser", "all urls"
+            connect,
+            "SELECT urls FROM db_parser",
+            "all urls"
             )
-    if status_ == 0:
+    if status == 0:
         return _extracted_from_create_info_3(
-            "SELECT urls FROM db_parser WHERE status=0", "all urls status=0"
+            connect,
+            "SELECT urls FROM db_parser WHERE status=0",
+            "all urls status=0"
         )
-    if status_ == 1:
-        data = c.execute("SELECT urls FROM db_parser WHERE status=1")
+    if status == 1:
+        data = connect.execute("SELECT urls FROM db_parser WHERE status=1")
         return {
             "all urls status=1": len(data.fetchall()),
             }
 
 
-def _extracted_from_create_info_3(arg0, arg1):
-    query = arg0
-    data = c.execute(query)
-    return {arg1: len(data.fetchall())}
-
-
-def create_record(url, status_, parsing_data):
+def create_record(connect, url, status_, parsing_data):
     parameters = (url, status_, parsing_data)
     query = "INSERT OR IGNORE INTO db_parser VALUES (?, ?, ?)"
-    c.execute(query, parameters)
+    connect.execute(query, parameters)
     db.commit()
