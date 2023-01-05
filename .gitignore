@@ -4,3 +4,5 @@ doc
 dockerfile
 .dockerignore
 TODO
+__pycache__
+.pytest_cache
