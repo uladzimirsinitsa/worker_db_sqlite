@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -32,7 +31,7 @@ class Urls(BaseModel):
 app = FastAPI()
 
 
-@app.get("/v1/urls")
+@app.post("/v1/urls")
 async def get_urls(request: Urls):
     data = jsonable_encoder(request)
     code = data.get("code")
@@ -40,7 +39,7 @@ async def get_urls(request: Urls):
     return create_list_urls(next(setup_connection()), code, status)
 
 
-@app.get("/v1/info")
+@app.post("/v1/info")
 async def get_info(request: Info):
     data = jsonable_encoder(request)
     code = data.get("code")
@@ -48,7 +47,7 @@ async def get_info(request: Info):
     return create_info(next(setup_connection()), code, status)
 
 
-@app.post("/v1/")
+@app.post("/v1/record")
 async def create_record(request: Record):
     data = jsonable_encoder(request)
     code = data.get("code")
@@ -56,4 +55,4 @@ async def create_record(request: Record):
     status = data.get("status")
     parsing_data = data.get("parsing_data")
     create_record_db(next(setup_connection()), url, status, parsing_data)
-    return {"status": "OK"}
+    return {"record": "created"}
