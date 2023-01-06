@@ -1,11 +1,12 @@
+import os
 import sqlite3
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
-#DB = os.environ['FILE_DB']
-#db = sqlite3.connect(DB, check_same_thread=False)
+# DB = os.environ['FILE_DB']
+# db = sqlite3.connect(DB, check_same_thread=False)
 db = sqlite3.connect(r'C:\\dbs\\test_db.db', check_same_thread=False)
 
 
@@ -17,11 +18,15 @@ def setup_connection():
     yield connect
 
 
-def create_list_urls(connect, code, status):
-    pass
+def create_list_urls(connect):
+    query = "SELECT urls FROM db_parser WHERE status=0"
+    data = connect.execute(query)
+    temp = []
+    temp.extend(item[0] for item in data.fetchall())
+    return temp
 
 
-def extracted_from_create_info_3(connect, arg_0, arg_1):
+def extracted_from_create_info(connect, arg_0, arg_1):
     query = arg_0
     data = connect.execute(query)
     return {arg_1: len(data.fetchall())}
@@ -30,13 +35,13 @@ def extracted_from_create_info_3(connect, arg_0, arg_1):
 def create_info(connect, code, status):
     '''Create info response'''
     if code == 0:
-        return extracted_from_create_info_3(
+        return extracted_from_create_info(
             connect,
             "SELECT urls FROM db_parser",
             "all urls"
             )
     if status == 0:
-        return extracted_from_create_info_3(
+        return extracted_from_create_info(
             connect,
             "SELECT urls FROM db_parser WHERE status=0",
             "all urls status=0"

@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
-from db_connector import create_list_urls
-from db_connector import create_info
-from db_connector import create_record_db
-from db_connector import setup_connection
+from db_connector_sqlite import create_list_urls
+from db_connector_sqlite import create_info
+from db_connector_sqlite import create_record_db
+from db_connector_sqlite import setup_connection
 
 
 class Record(BaseModel):
@@ -22,21 +22,12 @@ class Info(BaseModel):
     status: int
 
 
-class Urls(BaseModel):
-    '''Request schema'''
-    code: int
-    status: int
-
-
 app = FastAPI()
 
 
-@app.post("/v1/urls")
-async def get_urls(request: Urls):
-    data = jsonable_encoder(request)
-    code = data.get("code")
-    status = data.get("status")
-    return create_list_urls(next(setup_connection()), code, status)
+@app.get("/v1/urls")
+async def get_urls():
+    return {"urls": create_list_urls(next(setup_connection()))}
 
 
 @app.post("/v1/info")
@@ -47,7 +38,7 @@ async def get_info(request: Info):
     return create_info(next(setup_connection()), code, status)
 
 
-@app.post("/v1/record")
+@app.post("/v1/create/record")
 async def create_record(request: Record):
     data = jsonable_encoder(request)
     code = data.get("code")
