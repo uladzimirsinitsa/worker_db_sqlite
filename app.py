@@ -6,7 +6,7 @@ from db_connector_sqlite import create_list_urls
 from db_connector_sqlite import create_info
 from db_connector_sqlite import create_record_db
 from db_connector_sqlite import setup_connection
-
+from db_connector_sqlite import update_record_db
 
 class Record(BaseModel):
     '''Request schema'''
@@ -47,3 +47,14 @@ async def create_record(request: Record):
     parsing_data = data.get("parsing_data")
     create_record_db(next(setup_connection()), url, status, parsing_data)
     return {"record": "created"}
+
+
+@app.post("/v1/update/url")
+async def update_record(request: Record):
+    data = jsonable_encoder(request)
+    code = data.get("code")
+    url = data.get("url")
+    status = data.get("status")
+    parsing_data = data.get("parsing_data")
+    update_record_db(next(setup_connection()), url, status, parsing_data)
+    return {"record": "updated"}

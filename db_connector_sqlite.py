@@ -58,3 +58,10 @@ def create_record_db(connect, url, status, parsing_data):
     query = "INSERT OR IGNORE INTO db_parser VALUES (?, ?, ?)"
     connect.execute(query, parameters)
     db.commit()
+
+
+def update_record_db(connect, url, status, parsing_data):
+    parameters = (parsing_data, url)
+    query = "UPDATE db_parser SET status=1, parsing_data=(?) WHERE urls=(?)"
+    connect.execute(query, parameters)
+    db.commit()
