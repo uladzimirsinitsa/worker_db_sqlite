@@ -5,20 +5,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-# DB = os.environ['FILE_DB']
-# db = sqlite3.connect(DB, check_same_thread=False)
-db = sqlite3.connect(r'C:\\dbs\\test_db.db', check_same_thread=False)
+#DB = os.environ['FILE_DB']
+#db = sqlite3.connect(DB)
+db = sqlite3.connect(r'C:\\dbs\\test_db.db')
 
 
-def setup_connection():
-    CREATE_TABLE = "CREATE TABLE IF NOT EXISTS db_parser(\
-                urls STRING PRIMARY KEY, status INT, parsing_data STRING)"
-    connect = db.cursor()
-    connect.execute(CREATE_TABLE)
-    yield connect
+CREATE_TABLE = "CREATE TABLE IF NOT EXISTS db_parser(\
+            urls STRING PRIMARY KEY, status INT, parsing_data STRING)"
+connect = db.cursor()
+connect.execute(CREATE_TABLE)
 
 
-def create_list_urls(connect):
+def create_list_urls():
     query = "SELECT urls FROM db_parser WHERE status=0"
     data = connect.execute(query)
     temp = []
@@ -26,23 +24,21 @@ def create_list_urls(connect):
     return temp
 
 
-def extracted_from_create_info(connect, arg_0, arg_1):
+def extracted_from_create_info(arg_0, arg_1):
     query = arg_0
     data = connect.execute(query)
     return {arg_1: len(data.fetchall())}
 
 
-def create_info(connect, code, status):
+def create_info(code, status):
     '''Create info response'''
     if code == 0:
         return extracted_from_create_info(
-            connect,
             "SELECT urls FROM db_parser",
             "all urls"
             )
     if status == 0:
         return extracted_from_create_info(
-            connect,
             "SELECT urls FROM db_parser WHERE status=0",
             "all urls status=0"
         )
@@ -53,14 +49,14 @@ def create_info(connect, code, status):
             }
 
 
-def create_record_db(connect, url, status, parsing_data):
+def create_record_db(url, status, parsing_data):
     parameters = (url, status, parsing_data)
     query = "INSERT OR IGNORE INTO db_parser VALUES (?, ?, ?)"
     connect.execute(query, parameters)
     db.commit()
 
 
-def update_record_db(connect, url, status, parsing_data):
+def update_record_db(url, status, parsing_data):
     parameters = (parsing_data, url)
     query = "UPDATE db_parser SET status=1, parsing_data=(?) WHERE urls=(?)"
     connect.execute(query, parameters)
