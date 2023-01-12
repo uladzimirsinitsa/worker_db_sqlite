@@ -8,6 +8,7 @@ from db_connector_sqlite import create_info_sqlite
 from db_connector_sqlite import create_record_db_sqlite
 from db_connector_sqlite import update_record_db_sqlite
 from db_connector_mysql import create_record_db_mysql
+from db_connector_mysql import update_record_db_mysql
 
 
 class Record(BaseModel):
@@ -59,5 +60,6 @@ async def update_record(request: Record):
     url = data.get("url")
     status = data.get("status")
     parsing_data = data.get("parsing_data")
-    update_record_db_sqlite(url, status, parsing_data)
+    #  update_record_db_sqlite(url, status, parsing_data)
+    update_record_db_mysql(url, status, parsing_data)
     return {"record": "updated"}
